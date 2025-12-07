@@ -52,6 +52,8 @@ Set your Gemini API key. For example, in a .env file in the project root:
 
 or set the environment variable directly in your shell.
 
+---
+
 ## 4. How to run
 
 From the project directory, run:
@@ -90,6 +92,8 @@ why do we cut the rolls first?
 can I use milk instead of cream?
 Here the assistant passes the full recipe JSON, the current step, and the conversation so far to Gemini, and returns a concise, context-aware answer.
 If the Gemini free-tier quota is exceeded, the assistant switches to a rules-only mode: navigation and structured questions continue to work, and the program does not crash.
+
+---
 
 ## 5. Hybrid design in one paragraph
 The assistant keeps step tracking and core logic entirely in Python (via a RecipeState dataclass), and treats the LLM as a controlled “add-on” rather than the brain of the system. Navigation, ingredients, time, temperature, and most quantity questions are answered with simple rules. The LLM is called only when the user asks for something more open-ended or interpretive, and it always receives the structured recipe and current step so its answers stay grounded. This setup illustrates a practical hybrid approach: let deterministic code handle state and safety, and use the LLM where natural language understanding and cooking knowledge genuinely help.
