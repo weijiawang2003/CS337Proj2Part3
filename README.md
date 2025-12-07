@@ -2,7 +2,6 @@
 # CS337 Project 2 ‚Äì Part 3  
 ## Hybrid Recipe Assistant
 
----
 
 ## 1. What this project does
 
@@ -15,7 +14,6 @@ It is intentionally **hybrid**:
 
 In other words: Python takes care of structure and state; the LLM fills in the ‚Äúsmart‚Äù explanations on top.
 
----
 
 ## 2. Main components
 
@@ -45,7 +43,6 @@ In other words: Python takes care of structure and state; the LLM fills in the ‚
 - `gemini_test.py`  
   Small script to verify that the Gemini API key and client are set up correctly.
 
----
 
 ## 3. Setup
 
@@ -63,7 +60,6 @@ In other words: Python takes care of structure and state; the LLM fills in the ‚
 
    or set the environment variable directly in your shell.
 
----
 
 ## 4. How to run
 
@@ -124,8 +120,6 @@ so far to Gemini, and returns a concise, context-aware answer.
 
 If the Gemini free-tier quota is exceeded, the assistant switches to a **rules-only mode**:
 navigation and structured questions continue to work, and the program does not crash.
-
----
 
 ## 5. Hybrid design in one paragraph
 
