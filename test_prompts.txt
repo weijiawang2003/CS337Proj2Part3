@@ -1,0 +1,204 @@
+TEST PROMPTS FOR HYBRID SYSTEM - LASAGNA RECIPE
+================================================
+
+Recipe URL: https://www.allrecipes.com/recipe/218091/classic-and-simple-meat-lasagna/
+
+Use these prompts to test your system's LLM capabilities after loading the recipe.
+
+PART 1 QUESTION TYPES (Basic Functionality)
+-------------------------------------------
+
+Navigation:
+- next
+- back
+- step 3
+- 2
+- continue
+- previous step
+
+Ingredients:
+- ingredients
+- show ingredients
+- what ingredients do I need?
+
+Time Questions:
+- how long do I bake it?
+- how long does it take to cook?
+- what's the cooking time?
+- how long should I bake the lasagna?
+
+Temperature Questions:
+- what temperature?
+- what temp should the oven be?
+- how hot should the oven be?
+- what temperature do I preheat to?
+
+Quantity Questions:
+- how much ground beef do I need?
+- how many eggs?
+- how much mozzarella cheese?
+- how much cottage cheese do I need?
+
+Substitution Questions:
+- can I use ricotta instead of cottage cheese?
+- what can I substitute for whole wheat noodles?
+- can I use regular lasagna noodles instead?
+- what can I use instead of tomato-basil pasta sauce?
+
+PART 3 LLM CAPABILITIES (New Features)
+--------------------------------------
+
+1. LLM-BASED PARSING
+   Test: Load the recipe URL and verify it parses correctly with LLM
+   Expected: Structured recipe with ingredients, steps, tools, methods extracted
+
+2. INTENT CLASSIFICATION
+   Test these to verify LLM correctly classifies intents:
+   
+   - "how do I preheat an oven?" (should be "how_to", not "temperature")
+   - "what temperature?" (should be "temperature")
+   - "can I use milk instead?" (should be "substitution")
+   - "what is cottage cheese?" (should be "what_is")
+   - "next step" (should be "navigation")
+   - "how much beef?" (should be "quantity")
+
+3. STATE TRACKING FROM DIALOGUE
+   Test sequence:
+   - Load recipe
+   - Say: "next" (should go to step 2)
+   - Say: "how long do I cook the beef?" (LLM should infer you're on step 3)
+   - Say: "what do I do next?" (LLM should understand context from previous steps)
+
+4. QUESTION ANSWERING WITH CONTEXT
+   Test these open-ended questions:
+   
+   - "why do I need to cook the noodles first?"
+   - "can I skip the eggs in the cottage cheese mixture?"
+   - "do I need to cover the lasagna while it bakes?"
+   - "what happens if I don't let it stand before serving?"
+   - "can I make this ahead of time?"
+   - "why do we layer it that way?"
+   - "what's the difference between cottage cheese and ricotta in lasagna?"
+
+5. YOUTUBE SEARCH INTEGRATION
+   Test "how-to" questions (should provide explanation + YouTube link):
+   
+   - "how do I preheat an oven?"
+   - "how do I cook ground beef?"
+   - "how do I layer lasagna?"
+   - "how do I know when the lasagna is done?"
+   - "how do I drain pasta?"
+   - "how do I do that?" (after being shown a step with a technique)
+
+6. OUT-OF-SCOPE DETECTION
+   Test these (should be politely rejected):
+   
+   - "what's the weather today?"
+   - "tell me a joke"
+   - "what's 2+2?"
+   - "who won the game last night?"
+
+7. CONTEXTUAL QUESTIONS
+   Test questions that require recipe context:
+   
+   - "how much did you say I need?" (referring to previous conversation)
+   - "what step am I on?"
+   - "what ingredients are in this step?"
+   - "what tools do I need for this step?"
+   - "can I do this step ahead of time?"
+
+8. COMPLEX REASONING
+   Test LLM's ability to reason about the recipe:
+   
+   - "if I want to make half the recipe, how much ground beef do I need?"
+   - "can I use Italian sausage instead of ground beef?"
+   - "can I freeze this lasagna?"
+   - "how long will leftovers keep in the fridge?"
+   - "what if I don't have whole wheat noodles?"
+
+9. TECHNIQUE EXPLANATIONS
+   Test LLM's cooking knowledge:
+   
+   - "what does 'al dente' mean?"
+   - "what does 'crumbly' mean when cooking beef?"
+   - "why do we let it stand before serving?"
+   - "what's the difference between baking and broiling?"
+
+10. AMBIGUOUS QUESTIONS
+    Test LLM's ability to clarify:
+    
+    - "what is that?" (after showing a step)
+    - "how much?" (without specifying ingredient)
+    - "can I use something else?" (without context)
+
+TESTING SEQUENCE
+----------------
+
+Recommended order for comprehensive testing:
+
+1. Load recipe URL
+2. Test navigation (next, back, step numbers)
+3. Test basic questions (time, temp, quantity)
+4. Test substitution questions
+5. Test "how-to" questions (verify YouTube links appear)
+6. Test open-ended questions
+7. Test out-of-scope questions
+8. Test contextual questions (with conversation history)
+9. Test ambiguous questions
+
+EXPECTED BEHAVIORS
+-----------------
+
+For "how-to" questions:
+✓ LLM provides explanation (2-4 sentences)
+✓ YouTube search link is provided
+✓ Explanation is context-aware (mentions recipe-specific details when relevant)
+
+For substitution questions:
+✓ LLM provides helpful alternatives
+✓ Mentions any recipe-specific considerations
+✓ Stays grounded in recipe context
+
+For out-of-scope questions:
+✓ Polite rejection message
+✓ Redirects to recipe/cooking topics
+
+For contextual questions:
+✓ Uses conversation history
+✓ References previous steps/ingredients mentioned
+✓ Maintains awareness of current step
+
+For state tracking:
+✓ Infers current step from dialogue
+✓ Handles implicit step changes
+✓ Falls back to Python tracking if LLM unavailable
+
+SPECIFIC TEST CASES FOR LASAGNA RECIPE
+--------------------------------------
+
+Based on the recipe structure:
+
+1. "How do I preheat an oven to 350 degrees?"
+   Expected: Explanation of preheating + YouTube link
+
+2. "How long do I cook the ground beef?"
+   Expected: "About 10 minutes" (from step 3)
+
+3. "Can I use regular lasagna noodles instead of whole wheat?"
+   Expected: LLM explains substitution, mentions any adjustments needed
+
+4. "Why do I need to let it stand before serving?"
+   Expected: LLM explains it allows lasagna to set, prevents it from falling apart
+
+5. "What if I don't have cottage cheese?"
+   Expected: LLM suggests ricotta as substitute, explains differences
+
+6. "How do I know when the lasagna is done?"
+   Expected: LLM explains visual cues (bubbling, melted cheese, browning)
+
+7. "Can I assemble this the night before?"
+   Expected: LLM discusses make-ahead options, storage considerations
+
+8. "What's the difference between the two baking times?"
+   Expected: LLM explains covered vs uncovered baking, why both are needed
+
