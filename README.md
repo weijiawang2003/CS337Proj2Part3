@@ -46,7 +46,8 @@ In other words: Python takes care of structure and state; the LLM fills in the â
 
    ```bash
    pip install google-genai python-dotenv requests beautifulsoup4 urllib3
-Set your Gemini API key. For example, in a .env file in the project root:
+
+2. Set your Gemini API key. For example, in a .env file in the project root:
 
 - GEMINI_API_KEY=your_api_key_here
 
