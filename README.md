@@ -58,7 +58,8 @@ or set the environment variable directly in your shell.
 
 From the project directory, run:
 
-python assistant.py
+    ```bash
+    python assistant.py
 
 You’ll see:
 
