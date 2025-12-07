@@ -69,28 +69,32 @@ Paste a recipe URL (e.g., an AllRecipes link).
 
 The assistant scrapes and parses the recipe, shows how many steps there are, and starts at step 1.
 You can then interact using natural commands:
-Navigation (rule-based)
-next, next step, continue
-back, previous, go back
-step 3 or just 3 to jump to a specific step
-Ingredients and basics (rule-based)
-ingredients, show ingredients
-how long do I bake it?
-what temp?
-how much sugar do I need?
-These are answered directly from the structured recipe JSON without calling the LLM.
-“How-to” help (hybrid with YouTube)
-how do I preheat the oven?
-how do I do that? (after a step)
+Navigation (rule-based): 
+- next, next step, continue
+- back, previous, go back
+- step 3 or just 3 to jump to a specific step
+
+Ingredients and basics (rule-based):
+- ingredients, show ingredients
+- how long do I bake it?
+- what temp?
+- how much sugar do I need?
+- These are answered directly from the structured recipe JSON without calling the LLM.
+- “How-to” help (hybrid with YouTube)
+- how do I preheat the oven?
+- how do I do that? (after a step)
+
 The assistant:
-Builds a short, context-aware search query from the current step (methods, ingredients, tools).
-Returns a YouTube search URL.
+- Builds a short, context-aware search query from the current step (methods, ingredients, tools).
+- Returns a YouTube search URL.
+
 Optionally adds an LLM explanation of what to do.
 Open-ended questions (LLM-backed)
 For example:
-why do we cut the rolls first?
-can I use milk instead of cream?
-Here the assistant passes the full recipe JSON, the current step, and the conversation so far to Gemini, and returns a concise, context-aware answer.
+- why do we cut the rolls first?
+- can I use milk instead of cream?
+- Here the assistant passes the full recipe JSON, the current step, and the conversation so far to Gemini, and returns a concise, context-aware answer.
+
 If the Gemini free-tier quota is exceeded, the assistant switches to a rules-only mode: navigation and structured questions continue to work, and the program does not crash.
 
 ---
