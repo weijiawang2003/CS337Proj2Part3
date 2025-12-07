@@ -62,6 +62,7 @@ From the project directory, run:
    ```bash
     python assistant.py
 
+
 You’ll see:
 
 Hybrid LLM + rules-based recipe assistant (Part 3).
