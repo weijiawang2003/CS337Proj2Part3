@@ -1,4 +1,4 @@
-````markdown
+
 # CS337 Project 2 – Part 3  
 ## Hybrid Recipe Assistant
 
