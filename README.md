@@ -1,15 +1,15 @@
-> # CS337 Project 2 – Part 3  
-> ## Hybrid Recipe Assistant
+**# CS337 Project 2 – Part 3  
+## Hybrid Recipe Assistant
 
 ---
 
-> ## 1. What this project does
->
-> This project is a **command-line cooking assistant** that helps a user walk through an online recipe.
->
-> It is intentionally **hybrid**:
->
-> - **Python rules** handle anything that should be predictable and stable.
+## 1. What this project does
+
+This project is a **command-line cooking assistant** that helps a user walk through an online recipe.
+
+It is intentionally **hybrid**:
+
+- **Python rules** handle anything that should be predictable and stable.
 > - A **Gemini LLM** is used only when flexible language understanding or cooking knowledge is actually helpful.
 >
 > In other words: Python takes care of structure and state; the LLM fills in the “smart” explanations on top.
@@ -129,4 +129,4 @@
 > ## 5. Hybrid design in one paragraph
 >
 > The assistant keeps step tracking and core logic entirely in Python (via a `RecipeState` dataclass) and treats the LLM as a controlled “add-on” rather than the main controller. Navigation, ingredients, time, temperature, and most quantity questions are handled with simple rules. The LLM is called only when the user asks for something more open-ended or interpretive, and it always receives the structured recipe and current step so its answers stay grounded. This illustrates a practical hybrid approach: let deterministic code handle state and safety, and use the LLM where natural language understanding and cooking knowledge genuinely help.
-
+**
