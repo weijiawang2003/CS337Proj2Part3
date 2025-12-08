@@ -1,15 +1,3 @@
-# assistant.py / llm_chat.py
-"""
-Hybrid LLM + rules-based cooking assistant (Part 3).
-
-- Reuses the structured recipe JSON produced by scrape.py.
-- Python tracks the current step (state tracking).
-- The LLM is used for flexible question answering, but only when needed.
-- For "how do I ..." / "how to ..." questions, we also call a
-  YouTube search "tool" (a helper function) and surface a search URL
-  alongside the LLM's answer.
-"""
-
 from __future__ import annotations
 
 import os
@@ -91,9 +79,6 @@ class RecipeState:
 
 
     def go_to_step(self, step_number: int) -> str:
-        """
-        Go to 1-based step_number and return a human-readable message.
-        """
         if self.num_steps == 0:
             return "No steps found in this recipe."
 
@@ -476,6 +461,7 @@ def main() -> None:
 
     state = RecipeState(recipe=recipe, current_step_idx=0)
     history: List[str] = []
+    
 
     title = recipe.get("title", "Unknown recipe")
     print(f'\nLoaded recipe: "{title}" with {state.num_steps} steps.')
