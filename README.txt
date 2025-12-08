@@ -1,208 +1,128 @@
-CS337 Project 2 - Part 3: Hybrid Recipe Assistant
-==================================================
+CS337 Project 2 – Part 3
+Hybrid Recipe Assistant
+Members: Weijia Wang, Shuyang Yu
+GitHub link: https://github.com/weijiawang2003/CS337Proj2Part3/tree/main
 
-GitHub Repository: [Please add your GitHub link here]
-
-SETUP
------
-
-1. Install dependencies:
-   pip install google-genai python-dotenv requests beautifulsoup4 urllib3 nltk
-
-2. Download NLTK data (if using rules-based parser):
-   python -c "import nltk; nltk.download('punkt'); nltk.download('averaged_perceptron_tagger')"
-
-3. Set your Gemini API key in a .env file:
-   GEMINI_API_KEY=your_api_key_here
-
-   Or set it as an environment variable:
-   export GEMINI_API_KEY=your_api_key_here
-
-4. Run the assistant:
-   python assistant_hybrid.py
-
-USAGE
------
-
-1. Start the program: python assistant_hybrid.py
-
-2. Paste a recipe URL (e.g., from AllRecipes.com)
-
-3. The system will parse the recipe and show the first step
-
-4. Interact with commands:
-   - Navigation: "next", "back", "step 3", "3"
-   - Ingredients: "ingredients", "show ingredients"
-   - Questions: "how long do I bake it?", "what temperature?", "how much sugar?"
-   - How-to: "how do I preheat the oven?" (triggers YouTube search)
-   - General: "can I use milk instead of cream?", "why do we cut the rolls first?"
-
-MODEL AND SETTINGS
-------------------
-
-Model: gemini-2.5-flash-lite
-Temperature: Default (not explicitly set, uses model default)
-Max tokens: Not explicitly set (uses model default)
-
-The system uses gemini-2.5-flash-lite for all LLM operations:
-- Recipe parsing
-- Intent classification
-- State tracking
-- Question answering
-- YouTube query refinement
-
-ARCHITECTURE
-------------
-
-The hybrid system combines rule-based components with LLM modules:
-
-1. RECIPE PARSING (llm_parser.py)
-   - Primary: LLM-based parser that extracts structured recipe data from HTML/text
-   - Fallback: Rules-based parser (parser.py) if LLM parsing fails
-   - Extracts: title, ingredients (with quantities/units), steps (with tools, methods, time, temperature)
-   - Output: Structured JSON matching the recipe representation
-
-2. INTENT CLASSIFICATION (llm_intent.py)
-   - Replaces regex/keyword matching with LLM-based classification
-   - Categories: navigation, ingredients, time, temperature, quantity, substitution, how_to, what_is, question, acknowledgment, out_of_scope
-   - Returns: intent category, confidence, needs_llm flag, needs_youtube flag, refined_query
-   - Enables smart routing to appropriate handlers
-
-3. STATE TRACKING (llm_state_tracker.py)
-   - Infers current recipe step from dialogue history
-   - Uses LLM to understand implicit step changes
-   - Falls back to Python-based tracking if LLM unavailable
-   - Maintains RecipeState dataclass for structured state representation
-
-4. QUESTION ANSWERING (prompts.py + assistant_hybrid.py)
-   - Uses LLM with full recipe context, current step, and conversation history
-   - Handles open-ended questions, substitutions, explanations
-   - Grounded in recipe data to reduce hallucinations
-   - Concise responses (2-4 sentences typically)
-
-5. YOUTUBE SEARCH INTEGRATION
-   - Detects "how-to" questions via intent classification
-   - Uses LLM to refine/generate search queries from user questions
-   - Context-aware: uses current step information to improve queries
-   - Returns YouTube search URLs alongside LLM answers
-
-6. SCAFFOLDING COMPONENTS (assistant_hybrid.py)
-   - Rule-based handlers for fast, predictable operations:
-     * Navigation (next, back, step N)
-     * Time/temperature/quantity extraction from structured data
-     * Ingredient listing
-   - Python state management (RecipeState class)
-   - Separation of concerns: control logic separate from LLM reasoning
-   - Fallback mechanisms when LLM unavailable
-
-COMPONENT IMPLEMENTATION DETAILS
-----------------------------------
-
-Recipe Parser (llm_parser.py):
-- Extracts text from HTML using BeautifulSoup
-- Sends recipe content to LLM with structured extraction prompt
-- Parses JSON response and validates structure
-- Adds "gather ingredients" step if not present
-- Handles errors gracefully with fallback
-
-Intent Classifier (llm_intent.py):
-- Single-shot classification per user message
-- Uses conversation context for better classification
-- Returns structured JSON with intent and metadata
-- Fallback to "question" intent on errors
-
-State Tracker (llm_state_tracker.py):
-- Analyzes conversation history to infer current step
-- Considers explicit mentions, navigation commands, step references
-- Returns step index with confidence level
-- Only updates state if confidence is high/medium
-
-Question Answerer:
-- Builds comprehensive prompt with recipe, state, and history
-- Uses SYSTEM_PROMPT_QA for consistent behavior
-- Handles out-of-scope questions with polite redirection
-- Grounded in recipe data to prevent hallucinations
-
-YouTube Query Refiner:
-- Takes user question and current step context
-- Generates concise, effective search queries
-- Removes recipe-specific details that won't help in general search
-- Returns refined query for YouTube search function
-
-Hybrid Design Principles:
-- Python handles: state management, navigation, structured data extraction
-- LLM handles: parsing, intent classification, state inference, open-ended questions
-- Fallbacks: Rules-based parser, Python state tracking, error handling
-- Efficiency: Use rules for fast operations, LLM for complex reasoning
-- Separation: Control logic in Python, reasoning in LLM with clear boundaries
-
-INTENT CATEGORIES AND MAPPING
-------------------------------
-
-1. navigation -> Python rule-based handlers (next, back, step N)
-2. ingredients -> Python rule-based handler (format_ingredients)
-3. time -> Python rule-based handler (if unambiguous) or LLM (if ambiguous)
-4. temperature -> Python rule-based handler (if unambiguous) or LLM (if ambiguous)
-5. quantity -> Python rule-based handler (if unambiguous) or LLM (if ambiguous)
-6. substitution -> LLM (requires cooking knowledge)
-7. how_to -> LLM + YouTube search (requires explanation and video link)
-8. what_is -> LLM (requires definition/explanation)
-9. question -> LLM (general questions about recipe/cooking)
-10. acknowledgment -> Python rule-based handler (simple response)
-11. out_of_scope -> LLM (polite rejection message)
-
-EFFICIENCY CONSIDERATIONS
+1. What this project does
 -------------------------
 
-- Uses gemini-2.5-flash-lite (faster, cheaper model) for all operations
-- Rules-based handlers for common, predictable operations (navigation, simple Q&A)
-- LLM only called when needed (intent classification determines routing)
-- Conversation history limited to last 6-10 turns to reduce context size
-- Recipe content truncated if too long (>10000 chars for parsing)
+This project is a command-line cooking assistant that helps a user walk through an online recipe.
 
-ERROR HANDLING
---------------
+It is intentionally hybrid:
 
-- LLM parsing failures fall back to rules-based parser
-- LLM API quota exhaustion disables LLM but keeps rules-based functionality
-- Intent classification errors fall back to "question" intent
-- State tracking errors keep current Python-tracked state
-- All errors handled gracefully without crashing
+- Python rules handle anything that should be predictable and stable.
+- A Gemini LLM is used only when flexible language understanding or cooking knowledge is actually helpful.
 
-TESTING
--------
+In other words: Python takes care of structure and state; the LLM fills in the “smart” explanations on top.
 
-Test with various recipe URLs from AllRecipes.com:
-- Simple recipes (few ingredients, few steps)
-- Complex recipes (many ingredients, many steps)
-- Recipes with unusual formatting
 
-Test question types:
-- Navigation commands
-- Time/temperature/quantity questions
-- Substitution questions
-- How-to questions (should trigger YouTube)
-- Out-of-scope questions (should be rejected politely)
-- General cooking questions
+2. Main components
+------------------
 
-FILES
------
+assistant.py
+    Main entry point for the hybrid assistant (Part 3).
+    - Loads a recipe via scrape.py
+    - Tracks the current step
+    - Handles most commands with rules
+    - Calls the LLM only when needed
 
-- assistant_hybrid.py: Main entry point with hybrid system
-- llm_parser.py: LLM-based recipe parser
-- llm_intent.py: LLM-based intent classifier
-- llm_state_tracker.py: LLM-based state tracker
-- prompts.py: Enhanced prompts for different LLM functionalities
-- scrape.py: Rules-based recipe parser (fallback)
-- parser.py: Rules-based parsing utilities
-- prompt.py: Original system prompt (kept for compatibility)
+scrape.py
+    Given a recipe URL, scrapes the page and returns a structured JSON recipe
+    (title, ingredients, steps, tools, methods, time, temperature).
 
-NOTES
------
+parser.py
+    Rule-based recipe parser used by scrape.py. Reused from earlier parts so the
+    hybrid system has a clean, consistent representation to work with.
 
-- The system is designed to be robust: if LLM fails, rules-based components continue working
-- State tracking can be disabled (USE_LLM_STATE_TRACKING = False) to use Python-only tracking
-- LLM parser can be disabled (USE_LLM_PARSER = False) to use rules-based parser only
-- All LLM components use the same model (gemini-2.5-flash-lite) for consistency
-- Responses are kept concise to reduce token usage and improve user experience
+prompt.py
+    Contains the SYSTEM_PROMPT used when talking to Gemini, including
+    instructions about using the provided recipe and state.
 
+interface.py
+    The earlier rule-only assistant from Parts 1–2. Kept as a baseline to
+    compare with the hybrid approach.
+
+gemini_test.py
+    Small script to verify that the Gemini API key and client are set up
+    correctly.
+
+
+3. Setup
+--------
+
+1) Install dependencies (example):
+
+   pip install google-genai python-dotenv requests beautifulsoup4 urllib3
+
+2) Set your Gemini API key. For example, in a .env file in the project root:
+
+   GEMINI_API_KEY=your_api_key_here
+
+   or set the environment variable directly in your shell.
+
+
+4. How to run
+-------------
+
+From the project directory, run:
+
+   python assistant.py
+
+You’ll see something like:
+
+   Hybrid LLM + rules-based recipe assistant (Part 3).
+   Paste a recipe URL:
+
+Paste a recipe URL (e.g., an AllRecipes link).
+
+The assistant scrapes and parses the recipe, shows how many steps there are,
+and starts at step 1. You can then interact using natural commands:
+
+Navigation (rule-based)
+   - next, next step, continue
+   - back, previous, go back
+   - step 3 or just 3 to jump to a specific step
+
+Ingredients and basics (rule-based)
+   - ingredients, show ingredients
+   - how long do I bake it?
+   - what temp?
+   - how much sugar do I need?
+
+These are answered directly from the structured recipe JSON without calling the LLM.
+
+“How-to” help (hybrid with YouTube)
+   - how do I preheat the oven?
+   - how do I do that? (asked after a step)
+
+For these, the assistant:
+   - Builds a short, context-aware search query from the current step
+     (methods, ingredients, tools).
+   - Returns a YouTube search URL.
+   - Optionally adds an LLM explanation of what to do.
+
+Open-ended questions (LLM-backed)
+   For example:
+   - why do we cut the rolls first?
+   - can I use milk instead of cream?
+
+Here the assistant passes the full recipe JSON, the current step, and the
+conversation so far to Gemini, and returns a concise, context-aware answer.
+
+If the Gemini free-tier quota is exceeded, the assistant switches to a
+rules-only mode: navigation and structured questions continue to work,
+and the program does not crash.
+
+
+5. Hybrid design in one paragraph
+---------------------------------
+
+The assistant keeps step tracking and core logic entirely in Python (via a
+RecipeState dataclass) and treats the LLM as a controlled “add-on” rather than
+the main controller. Navigation, ingredients, time, temperature, and most
+quantity questions are handled with simple rules. The LLM is called only when
+the user asks for something more open-ended or interpretive, and it always
+receives the structured recipe and current step so its answers stay grounded.
+This illustrates a practical hybrid approach: let deterministic code handle
+state and safety, and use the LLM where natural language understanding and
+cooking knowledge genuinely help.
